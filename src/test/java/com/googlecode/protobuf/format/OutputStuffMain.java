@@ -1,5 +1,6 @@
 package com.googlecode.protobuf.format;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import com.googlecode.protobuf.format.issue23.Issue23;
 
@@ -54,6 +55,7 @@ public class OutputStuffMain {
                                                     Issue23.InnerTestMessage.InnerInnerTestMessage.newBuilder()
                                                         .setValue(0f))
             )
+            .setUnknownBytes(ByteString.copyFromUtf8("foo bar baz"))
             .build();
     }
 
