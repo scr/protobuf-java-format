@@ -30,6 +30,7 @@ message NewTestMessage {
     optional int64 longvalue = 4;
   }
   repeated InnerTestMessage unknownfield_repeated_message = 10;
+  optional bytes unknown_bytes = 11;
 }
 
 message InnerTestMessage {

@@ -244,12 +244,12 @@ public class JsonFormat extends AbstractCharBasedFormatter {
             for (int value : field.getFixed32List()) {
                 if (firstValue) {firstValue = false;}
                 else {generator.print(", ");}
-                generator.print(String.format((Locale) null, "0x%08x", value));
+                generator.print(unsignedToString(value));
             }
             for (long value : field.getFixed64List()) {
                 if (firstValue) {firstValue = false;}
                 else {generator.print(", ");}
-                generator.print(String.format((Locale) null, "0x%016x", value));
+                generator.print(unsignedToString(value));
             }
             for (ByteString value : field.getLengthDelimitedList()) {
                 if (firstValue) {firstValue = false;}

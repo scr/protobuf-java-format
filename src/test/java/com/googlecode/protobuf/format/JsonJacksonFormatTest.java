@@ -9,16 +9,13 @@ import com.google.protobuf.ExtensionRegistry;
 import com.google.protobuf.UnknownFieldSet;
 import com.googlecode.protobuf.format.issue23.Issue23;
 import com.googlecode.protobuf.format.issue23.Issue23.InnerTestMessage;
-import com.googlecode.protobuf.format.issue23.Issue23.NewTestMessage;
-import com.googlecode.protobuf.format.issue23.Issue23.OldTestMessage;
 import com.googlecode.protobuf.format.issue23.Issue23.InnerTestMessage.InnerInnerTestMessage;
+import com.googlecode.protobuf.format.issue23.Issue23.NewTestMessage;
 import com.googlecode.protobuf.format.issue23.Issue23.NewTestMessage.UnknownGroup;
-
+import com.googlecode.protobuf.format.issue23.Issue23.OldTestMessage;
 import org.testng.Assert;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.testng.reporters.Files;
-
 import protobuf_unittest.UnittestProto;
 
 import java.io.StringWriter;
@@ -26,7 +23,6 @@ import java.math.BigInteger;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.testng.Assert.*;
 
 /**
  * @author scr on 10/13/15.
@@ -79,12 +75,12 @@ public class JsonJacksonFormatTest {
         assertThat(testAllTypesBuilder.getOptionalUint64(), is(maxLongAsBigInt.longValue()));
         assertThat(testAllTypesBuilder.getOptionalFixed64(), is(maxLongAsBigInt.longValue()));
     }
-    
-    @Test(enabled=false, description = "https://github.com/bivas/protobuf-java-format/issues/23")
-    public void testIssue23Simple() throws Exception {    	
-    	JsonJacksonFormat jsonJacksonFormat =
+
+    @Test(description = "https://github.com/bivas/protobuf-java-format/issues/23")
+    public void testIssue23Simple() throws Exception {
+        JsonJacksonFormat jsonJacksonFormat =
                 (JsonJacksonFormat) new FormatFactory().createFormatter(FormatFactory.Formatter.JSON_JACKSON);
-    	Issue23.MsgWithUnknownFields issue23Message = Issue23.MsgWithUnknownFields.newBuilder()
+        Issue23.MsgWithUnknownFields issue23Message = Issue23.MsgWithUnknownFields.newBuilder()
                 .setLeaf1("Hello")
                 .setLeaf2(23)
                 .addLeaf3(41)
@@ -95,7 +91,7 @@ public class JsonJacksonFormatTest {
                                         .build())
                                 .build())
                 .build();
-        String message = jsonJacksonFormat.printToString(issue23Message);        
+        String message = jsonJacksonFormat.printToString(issue23Message);
 
         Issue23.MsgWithUnknownFields.Builder issue23Builder = Issue23.MsgWithUnknownFields.newBuilder();
         ExtensionRegistry extensionRegistry = ExtensionRegistry.newInstance();
@@ -104,44 +100,44 @@ public class JsonJacksonFormatTest {
         jsonJacksonFormat.merge(jsonParser, extensionRegistry, issue23Builder);
         assertThat("No unknown field 4", issue23Builder.getUnknownFields().hasField(4));
     }
-    
-    @Test(enabled=false, description = "https://github.com/bivas/protobuf-java-format/issues/23")
+
+    @Test(description = "https://github.com/bivas/protobuf-java-format/issues/23")
     public void testIssue23Complex() throws Exception {
-    	// Create version of message with "unknown" fields
+        // Create version of message with "unknown" fields
         NewTestMessage expected = NewTestMessage.newBuilder()
-            .setKnownfield("hello")
-            .setUnknownfieldstring1("world")
-            .addUnknownfieldstring2("I")
-            .addUnknownfieldstring2("am")
-            .setUnknownfieldMessage(InnerTestMessage.newBuilder()
-                .setValue(30)
-                .setInnerMessage(InnerInnerTestMessage.newBuilder().setValue(1.2f))
-            )
-            .setUnknownfieldInt64(51232271120233L)
-            .setUnknownfieldInt32(6)
-            .setUnknownfieldFloat(2.3f)
-            .setUnknownfieldDouble(3.14d)
-            .addUnknownGroup(UnknownGroup.newBuilder()
-                .setName("hi")
-                .setIntvalue(23)
-                .setFloatvalue(5.2f)
-                .setLongvalue(44232993922327L))
-            .addUnknownfieldRepeatedMessage(InnerTestMessage.newBuilder()
-                .setValue(6)
-                .setInnerMessage(InnerInnerTestMessage.newBuilder().setValue(-1.3f))
-            )
-            .addUnknownfieldRepeatedMessage(InnerTestMessage.newBuilder()
-                .setValue(-110)
-                .setInnerMessage(InnerInnerTestMessage.newBuilder().setValue(0f))
-            )
-            .build();
+                .setKnownfield("hello")
+                .setUnknownfieldstring1("world")
+                .addUnknownfieldstring2("I")
+                .addUnknownfieldstring2("am")
+                .setUnknownfieldMessage(InnerTestMessage.newBuilder()
+                        .setValue(30)
+                        .setInnerMessage(InnerInnerTestMessage.newBuilder().setValue(1.2f))
+                )
+                .setUnknownfieldInt64(51232271120233L)
+                .setUnknownfieldInt32(6)
+                .setUnknownfieldFloat(2.3f)
+                .setUnknownfieldDouble(3.14d)
+                .addUnknownGroup(UnknownGroup.newBuilder()
+                        .setName("hi")
+                        .setIntvalue(23)
+                        .setFloatvalue(5.2f)
+                        .setLongvalue(44232993922327L))
+                .addUnknownfieldRepeatedMessage(InnerTestMessage.newBuilder()
+                        .setValue(6)
+                        .setInnerMessage(InnerInnerTestMessage.newBuilder().setValue(-1.3f))
+                )
+                .addUnknownfieldRepeatedMessage(InnerTestMessage.newBuilder()
+                        .setValue(-110)
+                        .setInnerMessage(InnerInnerTestMessage.newBuilder().setValue(0f))
+                )
+                .build();
 
         // Parse this message into the old version of the proto
         OldTestMessage parsedIntoOld = OldTestMessage.parseFrom(expected.toByteArray());
 
         NewTestMessage newRightBackFromOld = NewTestMessage.parseFrom(parsedIntoOld.toByteArray());
         Assert.assertEquals(newRightBackFromOld, expected);
-        
+
         JsonJacksonFormat jsonJacksonFormat =
                 (JsonJacksonFormat) new FormatFactory().createFormatter(FormatFactory.Formatter.JSON_JACKSON);
 
@@ -149,24 +145,26 @@ public class JsonJacksonFormatTest {
         String oldJson = jsonJacksonFormat.printToString(parsedIntoOld);
 
         // Parse back from json into new and old protos
-        OldTestMessage.Builder oldBuilder = OldTestMessage.newBuilder();
-        jsonJacksonFormat.merge(
-        	JSON_FACTORY.createParser(oldJson),
-            ExtensionRegistry.getEmptyRegistry(),
-            oldBuilder);
-        OldTestMessage oldParsedFromJson = oldBuilder.build();
         NewTestMessage.Builder newBuilder = NewTestMessage.newBuilder();
         jsonJacksonFormat.merge(
-            JSON_FACTORY.createParser(oldJson),
-            ExtensionRegistry.getEmptyRegistry(),
-            newBuilder);
-        NewTestMessage newParsedFromJson = newBuilder.build(); 
+                JSON_FACTORY.createParser(oldJson),
+                ExtensionRegistry.getEmptyRegistry(),
+                newBuilder);
+        NewTestMessage newParsedFromJson = newBuilder.build();
+
+        OldTestMessage.Builder oldBuilder = OldTestMessage.newBuilder();
+        jsonJacksonFormat.merge(
+                JSON_FACTORY.createParser(oldJson),
+                ExtensionRegistry.getEmptyRegistry(),
+                oldBuilder);
+        OldTestMessage oldParsedFromJson = oldBuilder.build();
+        assertThat(oldParsedFromJson, is(parsedIntoOld));
 
         NewTestMessage newParsedFromOld = NewTestMessage.parseFrom(oldParsedFromJson.toByteArray());
         NewTestMessage newParsedFromNew = NewTestMessage.parseFrom(newParsedFromJson.toByteArray());
 
-        Assert.assertEquals(newParsedFromOld, expected);
-        Assert.assertEquals(newParsedFromNew, expected);
-        Assert.assertEquals(newParsedFromJson, expected);	
+        assertThat(newParsedFromOld, is(expected));
+        assertThat(newParsedFromNew, is(expected));
+        assertThat(newParsedFromJson, is(expected));
     }
 }
